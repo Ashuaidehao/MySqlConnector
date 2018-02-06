@@ -6,7 +6,6 @@ env:
   - IMAGE=
     NAME=azure
     OMIT_FEATURES=Sha256Password,CachingSha2Password,KnownCertificateAuthority,Timeout,ErrorCodes
-    secure: pzqwb08GpsoHkss1bSprwcvRNts/mgaFDD+dUOf6HQPr8n2mM9jeqlYBs0gse3g+XE/yRHluObbuITlyIxo+Gbe4XX+4aSka3pTkFytqX+wOcp6CgYES5RtZgX1fLiX55vTCq3Yl6voN0rhaE2Deoq9Fmta+44TyUGVzymiwT7qRSkV71BR1sn8GyGCnglwGAU+K4BSK5Kcdd/BBOOaV8R96m+lzx0nAy3yqWFufIFQ6JV6Ri8YNO1rMgQz43Pvc/aPKagoSDc+E2/+VKbtsp2ElLdmNs0/wJ+H0Yk4lUMzisuAEO0pOR3PIVIbDfE5JJH9xYRli18cGqc4vBT2tx9/OSb/n4HtO8k7oOIPNQxnBHBA4N7Vd9CHZOSLTy91O20tMmFlLO2otP0qRBvpzd7hdri++UAmJgCmOJWCGPXmM01gtR/rJSGTLB9/ah1nf/Vm7gjothuAIAoD+9SEduiFb4N2qyUONYXK92kRvzTtvRMUz7r1zsU8I9IUdDkyqj7EU1bCDp6AJZFxTG8Qn4ORUC4qBBvdOESO1eoyhnI4bb3Af0PxrwcISRofK3sjJtzwZ3DyE0AL6z0kDIRW0mKLlJIV4XlB7P3QWOqTrlzi13rCSpigpgF2KQLTbK1IA6JuZMym7Eh7mH7goS8tpVMjI5ISdnObzqHOiwxzQmQM=
   - IMAGE=mysql:5.6
     NAME=mysql
     OMIT_FEATURES=Json,Sha256Password,OpenSsl,LargePackets,CachingSha2Password,SessionTrack
