@@ -3,6 +3,10 @@ dist: trusty
 services: docker
 
 env:
+  - IMAGE=
+    NAME=azure
+    OMIT_FEATURES=Sha256Password,CachingSha2Password,KnownCertificateAuthority,Timeout,ErrorCodes
+    secure: pzqwb08GpsoHkss1bSprwcvRNts/mgaFDD+dUOf6HQPr8n2mM9jeqlYBs0gse3g+XE/yRHluObbuITlyIxo+Gbe4XX+4aSka3pTkFytqX+wOcp6CgYES5RtZgX1fLiX55vTCq3Yl6voN0rhaE2Deoq9Fmta+44TyUGVzymiwT7qRSkV71BR1sn8GyGCnglwGAU+K4BSK5Kcdd/BBOOaV8R96m+lzx0nAy3yqWFufIFQ6JV6Ri8YNO1rMgQz43Pvc/aPKagoSDc+E2/+VKbtsp2ElLdmNs0/wJ+H0Yk4lUMzisuAEO0pOR3PIVIbDfE5JJH9xYRli18cGqc4vBT2tx9/OSb/n4HtO8k7oOIPNQxnBHBA4N7Vd9CHZOSLTy91O20tMmFlLO2otP0qRBvpzd7hdri++UAmJgCmOJWCGPXmM01gtR/rJSGTLB9/ah1nf/Vm7gjothuAIAoD+9SEduiFb4N2qyUONYXK92kRvzTtvRMUz7r1zsU8I9IUdDkyqj7EU1bCDp6AJZFxTG8Qn4ORUC4qBBvdOESO1eoyhnI4bb3Af0PxrwcISRofK3sjJtzwZ3DyE0AL6z0kDIRW0mKLlJIV4XlB7P3QWOqTrlzi13rCSpigpgF2KQLTbK1IA6JuZMym7Eh7mH7goS8tpVMjI5ISdnObzqHOiwxzQmQM=
   - IMAGE=mysql:5.6
     NAME=mysql
     OMIT_FEATURES=Json,Sha256Password,OpenSsl,LargePackets,CachingSha2Password,SessionTrack
@@ -20,7 +24,7 @@ env:
     OMIT_FEATURES=Json,Sha256Password,CachingSha2Password
 
 before_install:
-- .ci/docker-run.sh $IMAGE $NAME 3307 $OMIT_FEATURES
+- [[ -n $"IMAGE" ]] && .ci/docker-run.sh $IMAGE $NAME 3307 $OMIT_FEATURES
 - curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 - sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 - sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
@@ -30,17 +34,17 @@ before_install:
 script:
 - dotnet restore
 - pushd tests/MySqlConnector.Tests && dotnet xunit -c Release && popd
-- pushd tests/Conformance.Tests && CONNECTION_STRING="Server=localhost;Port=3307;User Id=mysqltest;Password='test;key=\"val';SSL Mode=None" dotnet xunit -c Release && popd
+- [[ -n $"IMAGE" ]] && pushd tests/Conformance.Tests && CONNECTION_STRING="Server=localhost;Port=3307;User Id=mysqltest;Password='test;key=\"val';SSL Mode=None" dotnet xunit -c Release && popd
 - pushd tests/SideBySide
 - dotnet build SideBySide.csproj -c Release -f netcoreapp2.0
 - echo 'Executing netcoreapp1.1.2 tests with No Compression, No SSL' && ../../.ci/use-config.sh config.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp1.1.2
 - echo 'Executing netcoreapp2.0 tests with No Compression, No SSL' && ../../.ci/use-config.sh config.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
 - echo 'Executing netcoreapp2.0 Debug Only tests' && time dotnet xunit -c Debug -f netcoreapp2.0 -class SideBySide.DebugOnlyTests
-- echo 'Executing netcoreapp2.0 tests with Compression, No SSL' && ../../.ci/use-config.sh config.compression.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
-- echo 'Executing netcoreapp1.1.2 tests with No Compression, SSL' && ../../.ci/use-config.sh config.ssl.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp1.1.2
-- echo 'Executing netcoreapp2.0 tests with No Compression, SSL' && ../../.ci/use-config.sh config.ssl.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
-- echo 'Executing netcoreapp2.0 tests with Compression, SSL' && ../../.ci/use-config.sh config.compression+ssl.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
-- echo 'Executing netcoreapp2.0 tests with Unix Domain Socket, No Compression, No SSL' && ../../.ci/use-config.sh config.uds.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
+- [[ -n $"IMAGE" ]] && echo 'Executing netcoreapp2.0 tests with Compression, No SSL' && ../../.ci/use-config.sh config.compression.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
+- [[ -n $"IMAGE" ]] && echo 'Executing netcoreapp1.1.2 tests with No Compression, SSL' && ../../.ci/use-config.sh config.ssl.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp1.1.2
+- [[ -n $"IMAGE" ]] && echo 'Executing netcoreapp2.0 tests with No Compression, SSL' && ../../.ci/use-config.sh config.ssl.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
+- [[ -n $"IMAGE" ]] && echo 'Executing netcoreapp2.0 tests with Compression, SSL' && ../../.ci/use-config.sh config.compression+ssl.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
+- [[ -n $"IMAGE" ]] && echo 'Executing netcoreapp2.0 tests with Unix Domain Socket, No Compression, No SSL' && ../../.ci/use-config.sh config.uds.json 172.17.0.1 3307 $NAME $OMIT_FEATURES && time dotnet xunit -c Release -f netcoreapp2.0
 - popd
 
 after_script:
