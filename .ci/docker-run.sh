@@ -24,6 +24,11 @@ NAME=$2
 PORT=$3
 OMIT_FEATURES=$4
 
+if [ "$IMAGE" == "-" ]; then
+  echo "Skipping Docker container"
+  exit 0
+fi
+
 sudo mkdir -p run/$NAME
 sudo chmod 777 run/$NAME
 
